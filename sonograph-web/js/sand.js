@@ -12,27 +12,37 @@
    ============================================================ */
 window.SonoSand = (function () {
   var SC = window.SONO_CONFIG.sand;
-  var W = 390, H = 844, CELL = 2, cols = W / CELL, rows = H / CELL;
-  var NP = W * H, NC = cols * rows;
+  var CELL = 2, W = 0, H = 0, cols, rows, NP, NC;
   var SUB = 3; // 1フレームあたりの計算回数
   var WHITE = 0xFFFFFFFF, CLEAR = 0x00000000;
 
-  var cv = document.createElement('canvas');
-  cv.width = W; cv.height = H;
-  var g = cv.getContext('2d');
-  var img = g.createImageData(W, H);
-  var pix = new Uint32Array(img.data.buffer);
-  var rnd = new Float32Array(NP);
-  for (var i0 = 0; i0 < NP; i0++) rnd[i0] = Math.random();
+  var cv = document.createElement('canvas'), g, img, pix, rnd;
+  var pxPlate;      // 1px ごとにどの板か（-1 は板ではない）
+  var cPlate;       // マスごとにどの板か
+  var amp;          // 振れ幅 0〜1
+  var D;            // 砂の動きやすさ（振れ幅の2乗）
+  var rho;          // 砂の量（1 で一面に敷きつめた状態）
+  var delta, disp;  // 計算用・描く砂の量
+  var nL, nR, nU, nD;
 
-  var pxPlate = new Int16Array(NP);      // 1px ごとにどの板か（-1 は板ではない）
-  var cPlate = new Int16Array(NC);       // マスごとにどの板か
-  var amp = new Float32Array(NC);        // 振れ幅 0〜1
-  var D = new Float32Array(NC);          // 砂の動きやすさ（振れ幅の2乗）
-  var rho = new Float32Array(NC);        // 砂の量（1 で一面に敷きつめた状態）
-  var delta = new Float32Array(NC);
-  var disp = new Float32Array(NC);       // 描く砂の量
-  var nL = new Int32Array(NC), nR = new Int32Array(NC), nU = new Int32Array(NC), nD = new Int32Array(NC);
+  // 画面の大きさ（スマホごとに違う）に合わせて入れ物を用意する
+  function alloc(w, h) {
+    if (w === W && h === H) return;
+    W = w; H = h;
+    cols = Math.ceil(W / CELL); rows = Math.ceil(H / CELL);
+    NP = W * H; NC = cols * rows;
+    cv.width = W; cv.height = H;
+    g = cv.getContext('2d');
+    img = g.createImageData(W, H);
+    pix = new Uint32Array(img.data.buffer);
+    rnd = new Float32Array(NP);
+    for (var i = 0; i < NP; i++) rnd[i] = Math.random();
+    pxPlate = new Int16Array(NP);
+    cPlate = new Int16Array(NC);
+    amp = new Float32Array(NC); D = new Float32Array(NC); rho = new Float32Array(NC);
+    delta = new Float32Array(NC); disp = new Float32Array(NC);
+    nL = new Int32Array(NC); nR = new Int32Array(NC); nU = new Int32Array(NC); nD = new Int32Array(NC);
+  }
   var list = null;                       // 板の上のマスの一覧
   var P = [];                            // 板ごとの進み具合と乱数
   var vib = 0, off = 0, total = 6, ctx = null;
@@ -45,7 +55,8 @@ window.SonoSand = (function () {
      inside   : (板, x, y) => 板の中か */
   var travel = SC.travel, ease = SC.ease;
 
-  function init(target2d, plates, fieldFor, inside, drawSeconds, shapeName) {
+  function init(target2d, w, h, plates, fieldFor, inside, drawSeconds, shapeName) {
+    alloc(w, h);
     ctx = target2d; total = drawSeconds; vib = 0; off = 0;
     var ov = (SC.shapes && SC.shapes[shapeName]) || {};
     travel = ov.travel != null ? ov.travel : SC.travel;

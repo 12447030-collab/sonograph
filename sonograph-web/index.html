@@ -9,13 +9,17 @@
 </head>
 <body>
 
-<!-- 390 × 844 を基準にしたステージ。端末に合わせて比率を保ったまま拡縮します -->
+<!-- 390 × 844 を基準にしたステージ。高さをアートボードに合わせて拡縮し、横幅は画面いっぱいまで広げます -->
 <div id="stage" data-screen="intro" data-lang="ja">
 
   <!-- 背景レイヤー（声に反応するものは Canvas、板は画像マスク） -->
   <canvas id="plates"></canvas>
+  <canvas id="plates-old"></canvas><!-- 切り替えの途中だけ、前の背景を表示する -->
   <canvas id="fx"></canvas>
   <img id="wave-img" alt="" hidden>
+
+  <!-- 文字やバー（アートボードの 844px の高さのまま、上下中央に置かれる） -->
+  <div id="ui">
 
   <!-- 01 INTRO -->
   <section class="screen" id="s-intro">
@@ -39,8 +43,6 @@
   <section class="screen" id="s-select">
     <p class="hint" data-t="selectHint"></p>
     <p class="sel-label">SELECT SHAPE</p>
-    <svg class="arrow arrow-l" viewBox="0 0 34 126" aria-hidden="true"><polyline points="33,1 1,63 33,125"/></svg>
-    <svg class="arrow arrow-r" viewBox="0 0 34 126" aria-hidden="true"><polyline points="1,1 33,63 1,125"/></svg>
     <p class="sel-name">RECTANGLE</p>
     <div class="dots"></div>
     <!-- 声の高さメーター：左＝低い声（＜へ送る）／中央＝基準（next）／右＝高い声（＞へ送る） -->
@@ -83,6 +85,7 @@
     <div class="dot"></div>
     <span class="next" data-asset="next">next</span>
   </div>
+  </div><!-- /#ui -->
 </div>
 
 <!-- 動作確認用の仮入力（config.js の debug:false で消えます） -->

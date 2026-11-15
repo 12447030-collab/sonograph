@@ -42,7 +42,10 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 #stage[data-screen="draw"]      { --bar-y: 715px; }
 
 /* ---------- 背景レイヤー ---------- */
-#plates, #fx, #wave-img { position: absolute; inset: 0; width: 390px; height: 844px; }
+#plates, #plates-old, #fx, #wave-img { position: absolute; inset: 0; width: 100%; height: 100%; }
+#plates-old { display: none; }
+/* 文字やバーの入れ物。高さはアートボードと同じ 844px、横幅は画面いっぱい（上の位置は app.js が決める） */
+#ui { position: absolute; left: 0; right: 0; top: 0; height: 844px; }
 #plates { display: none; }
 #fx { display: none; }
 #wave-img { object-fit: cover; }
@@ -84,12 +87,8 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .hint.off { opacity: 0; }
 .sel-label { left: 0; right: 0; top: 322px; text-align: center; font-size: 11px; letter-spacing: -.3px; font-weight: 300; }
 .sel-name { left: 0; right: 0; top: 392px; text-align: center; font-size: 27px; font-style: italic; letter-spacing: -1.5px; }
-.arrow { position: absolute; top: 352px; width: 34px; height: 126px; fill: none; stroke: currentColor; stroke-width: 1.2; }
-.arrow-l { left: 34px; }
-.arrow-r { right: 34px; }
-.arrow.pulse { stroke-width: 2.4; }
 .dots { position: absolute; left: 0; right: 0; top: 456px; display: flex; justify-content: center; gap: 8px; }
-.dots i { width: 6px; height: 6px; border-radius: 50%; background: #999; }
+.dots i { width: 6px; height: 6px; border-radius: 50%; background: #999; transition: background-color .35s ease; }
 .dots i.on { background: var(--black); }
 /* 声の高さメーター（線の区間の位置は app.js が config の範囲から計算） */
 .meter { position: absolute; left: 0; right: 0; top: 572px; height: 0; }
@@ -131,13 +130,14 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 #bar { position: absolute; left: 0; right: 0; top: var(--bar-y); height: 0; }
 #bar .track { position: absolute; left: 0; right: 0; top: -1px; height: 2px; background: var(--gray); }
 #stage[data-screen="intro"] #bar .track { background: #555; }
-#bar .fill { position: absolute; left: 0; top: -1px; height: 2px; width: 0; background: var(--ink); }
-#bar .dot { position: absolute; left: 0; top: -6.5px; width: 13px; height: 13px; margin-left: -6.5px; border-radius: 50%; background: var(--ink); border: 1.5px solid var(--ink); }
+#bar .fill { position: absolute; left: 0; top: -1px; height: 2px; width: 0; background: var(--ink); transition: background-color .25s ease; }
+#bar .dot { position: absolute; left: 0; top: -6.5px; width: 13px; height: 13px; margin-left: -6.5px; border-radius: 50%; background: var(--ink); border: 1.5px solid var(--ink); transition: background-color .25s ease, border-color .25s ease; }
 /* 声が聞こえないとき：点が中抜きになる */
 #stage.silent #bar .dot { background: var(--paper); }
 /* 音程が外れているとき：点が赤くなる */
 #stage.off-pitch #bar .dot { background: var(--red); border-color: var(--red); }
-#bar .next { position: absolute; right: 24px; top: -27px; font-size: 14px; font-weight: 300; letter-spacing: -.5px; opacity: .3; }
+#stage.off-pitch #bar .fill { background: var(--red); } /* 線も点と同じ赤にそろえる */
+#bar .next { position: absolute; right: 24px; top: -27px; font-size: 14px; font-weight: 300; letter-spacing: -.5px; opacity: .3; transition: opacity .3s ease; }
 #stage[data-screen="intro"] #bar .next { display: none; }
 /* 右端に届いたら next がはっきりする */
 #bar.done .next { opacity: 1; font-weight: 500; }
