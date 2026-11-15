@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>SONOGRAPH</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- 390 × 844 を基準にしたステージ。端末に合わせて比率を保ったまま拡縮します -->
+<div id="stage" data-screen="intro" data-lang="ja">
+
+  <!-- 背景レイヤー（声に反応するものは Canvas、板は画像マスク） -->
+  <canvas id="plates"></canvas>
+  <canvas id="fx"></canvas>
+  <img id="wave-img" alt="" hidden>
+
+  <!-- 01 INTRO -->
+  <section class="screen" id="s-intro">
+    <div class="lang">
+      <button type="button" data-lang="en">English</button>
+      <span class="lang-line"></span>
+      <button type="button" data-lang="ja">Japanese</button>
+    </div>
+    <h1 class="logo"><span class="logo-text">SONOGRAPH</span><img class="logo-img" alt="SONOGRAPH" hidden></h1>
+    <p class="tagline" data-asset="tagline">Draw with Your Voice.</p>
+  </section>
+
+  <!-- 02 FREQUENCY -->
+  <section class="screen" id="s-frequency">
+    <p class="f-lead" data-asset="yourVoiceIs">Your voice is</p>
+    <p class="f-about" data-asset="about">about</p>
+    <p class="f-hz"><span class="hz-num">165</span>Hz</p>
+  </section>
+
+  <!-- 03 SELECT SHAPE / 04 SELECT MATERIAL（同じドラムロール） -->
+  <section class="screen" id="s-select">
+    <p class="hint" data-t="selectHint"></p>
+    <p class="sel-label">SELECT SHAPE</p>
+    <svg class="arrow arrow-l" viewBox="0 0 34 126" aria-hidden="true"><polyline points="33,1 1,63 33,125"/></svg>
+    <svg class="arrow arrow-r" viewBox="0 0 34 126" aria-hidden="true"><polyline points="1,1 33,63 1,125"/></svg>
+    <p class="sel-name">RECTANGLE</p>
+    <div class="dots"></div>
+    <!-- 声の高さメーター：左＝低い声（＜へ送る）／中央＝基準（next）／右＝高い声（＞へ送る） -->
+    <div class="meter">
+      <span class="m-seg m-low"></span>
+      <span class="m-seg m-mid"></span>
+      <span class="m-seg m-high"></span>
+      <i class="m-dot"></i>
+      <span class="m-now"><span class="hz-now"></span>Hz</span>
+      <span class="m-lab m-lab-l">&lt;</span>
+      <span class="m-lab m-lab-c"><span class="hz-num">165</span>Hz</span>
+      <span class="m-lab m-lab-r">&gt;</span>
+    </div>
+  </section>
+
+  <!-- 05 DRAW -->
+  <section class="screen" id="s-draw">
+    <p class="d-title" data-asset="drawTitle">DRAW<br>WITH<br>YOUR VOICE</p>
+    <p class="d-hz"><span class="hz-num">165</span> Hz</p>
+    <p class="d-warn"></p>
+  </section>
+
+  <!-- 06 RESULT -->
+  <section class="screen" id="s-result">
+    <p class="r-logo" data-asset="resultLogo">SONOGRAPH</p>
+    <p class="r-hz"><span class="hz-num">165</span> Hz</p>
+    <p class="r-info"><span class="r-shape"></span><br><span class="r-material"></span></p>
+    <div class="r-actions">
+      <button type="button" id="btn-save">SAVE</button>
+      <button type="button" id="btn-change">CHANGE PLATE</button>
+      <button type="button" id="btn-restart">RESTART</button>
+    </div>
+  </section>
+
+  <!-- 共通：メッセージとプログレスバー -->
+  <p id="msg"></p>
+  <div id="bar">
+    <div class="track"></div>
+    <div class="fill"></div>
+    <div class="dot"></div>
+    <span class="next" data-asset="next">next</span>
+  </div>
+</div>
+
+<!-- 動作確認用の仮入力（config.js の debug:false で消えます） -->
+<div id="debug" hidden>
+  <button type="button" data-voice="low">LOW</button>
+  <button type="button" data-voice="base">BASE</button>
+  <button type="button" data-voice="high">HIGH</button>
+</div>
+<pre id="debug-info" hidden></pre>
+
+<script src="js/config.js"></script>
+<script src="js/input.js"></script>
+<script src="js/chladni.js"></script>
+<script src="js/sand.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
